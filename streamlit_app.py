@@ -335,12 +335,14 @@ if run_btn:
             program=program or None,
             notes=notes or None,
             geometry=geo_inputs,
+            btf_override=btf_value,
         )
 
         with st.spinner("Computing estimate…"):
             estimate = estimate_cost(inputs)
 
         st.session_state["estimate"] = estimate
+        st.session_state["inputs_raw"] = inputs.model_dump()
         st.session_state["run_complete"] = True
 
     except Exception as e:
@@ -483,7 +485,7 @@ if st.session_state.get("run_complete") and "estimate" in st.session_state:
         with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
             export_path = tmp.name
 
-        export_to_excel(st.session_state["estimate"], export_path)
+        export_to_excel(st.session_state["estimate"], st.session_state.get("inputs_raw", {}), export_path)
 
         with open(export_path, "rb") as f:
             excel_bytes = f.read()
