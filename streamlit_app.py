@@ -18,17 +18,18 @@ import tempfile
 import streamlit as st
 
 # ─── PATH SETUP ───────────────────────────────────────────────────────────────
-# streamlit_app.py lives at project root alongside engine/, geometry/, exporters/
+# Allow running from the project root or from app/
 _here = os.path.dirname(os.path.abspath(__file__))
-if _here not in sys.path:
-    sys.path.insert(0, _here)
+_root = os.path.dirname(_here)
+if _root not in sys.path:
+    sys.path.insert(0, _root)
 
 from engine.models import (
     Material, ComplexityTier, ToleranceTier, Region, OutsideProcess,
     OverrideSource, PartInputs
 )
 from engine.estimator import estimate_cost
-from engine.explain import add_narrative as generate_narrative
+from engine.explain import generate_narrative
 from exporters.excel_export import export_to_excel
 
 # ─── PAGE CONFIG ──────────────────────────────────────────────────────────────
@@ -334,7 +335,6 @@ if run_btn:
             program=program or None,
             notes=notes or None,
             geometry=geo_inputs,
-            btf_override=btf_value,
         )
 
         with st.spinner("Computing estimate…"):
