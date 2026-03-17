@@ -1,0 +1,8 @@
+streamlit>=1.32.0
+openpyxl>=3.1.0
+anthropic>=0.25.0
+pandas>=2.0.0
+# cadquery is an optional local dependency for STEP file parsing.
+# It cannot be built on Streamlit Cloud's free tier.
+# The app degrades gracefully — STEP upload is disabled, all other
+# features (manual input, cost engine, Excel export, AI narrative) work normally.

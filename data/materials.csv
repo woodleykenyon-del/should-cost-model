@@ -1,0 +1,9 @@
+material,price_low_per_lb,price_mid_per_lb,price_high_per_lb,density_lb_per_in3,notes
+AL-6061,1.20,1.50,1.90,0.0975,Common aerospace aluminum; stable pricing
+AL-7075,2.00,2.60,3.20,0.102,Higher strength; more volatile pricing
+SS-304,1.80,2.20,2.80,0.289,Corrosion resistant; stable
+SS-17-4,3.50,4.50,5.80,0.284,PH stainless; moderate volatility
+Ti-6Al-4V,18.00,22.00,28.00,0.160,High volatility; supply concentration risk
+Inconel-718,28.00,35.00,45.00,0.297,Very high volatility; long lead times
+Steel-4130,0.60,0.80,1.10,0.284,Low alloy; very stable pricing
+Steel-4340,0.75,1.00,1.40,0.284,Higher strength alloy; stable

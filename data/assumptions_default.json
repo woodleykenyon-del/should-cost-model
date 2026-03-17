@@ -1,0 +1,194 @@
+{
+  "_description": "Default assumptions for the Should-Cost engine. All values are baseline (mid) unless noted. Override at runtime via AssumptionsOverride.",
+  "buy_to_fly_ratios": {
+    "_description": "Blank weight multiplier by material and complexity tier. Key format: material__complexity (1-5).",
+    "AL-6061__1": 1.3,
+    "AL-6061__2": 1.5,
+    "AL-6061__3": 1.8,
+    "AL-6061__4": 2.2,
+    "AL-6061__5": 2.8,
+    "AL-7075__1": 1.3,
+    "AL-7075__2": 1.5,
+    "AL-7075__3": 1.9,
+    "AL-7075__4": 2.3,
+    "AL-7075__5": 3.0,
+    "SS-304__1": 1.4,
+    "SS-304__2": 1.6,
+    "SS-304__3": 2.0,
+    "SS-304__4": 2.5,
+    "SS-304__5": 3.2,
+    "SS-17-4__1": 1.4,
+    "SS-17-4__2": 1.7,
+    "SS-17-4__3": 2.1,
+    "SS-17-4__4": 2.6,
+    "SS-17-4__5": 3.3,
+    "Ti-6Al-4V__1": 1.5,
+    "Ti-6Al-4V__2": 1.8,
+    "Ti-6Al-4V__3": 2.3,
+    "Ti-6Al-4V__4": 3.0,
+    "Ti-6Al-4V__5": 4.0,
+    "Inconel-718__1": 1.5,
+    "Inconel-718__2": 1.9,
+    "Inconel-718__3": 2.5,
+    "Inconel-718__4": 3.2,
+    "Inconel-718__5": 4.2,
+    "Steel-4130__1": 1.3,
+    "Steel-4130__2": 1.5,
+    "Steel-4130__3": 1.8,
+    "Steel-4130__4": 2.2,
+    "Steel-4130__5": 2.7,
+    "Steel-4340__1": 1.3,
+    "Steel-4340__2": 1.5,
+    "Steel-4340__3": 1.8,
+    "Steel-4340__4": 2.2,
+    "Steel-4340__5": 2.7
+  },
+  "machining_hours": {
+    "_description": "Estimated machining hours by complexity tier and tolerance tier. Key: complexity__tolerance.",
+    "1__standard": 0.5,
+    "1__tight": 0.7,
+    "2__standard": 1.2,
+    "2__tight": 1.6,
+    "3__standard": 2.5,
+    "3__tight": 3.5,
+    "4__standard": 5.0,
+    "4__tight": 7.0,
+    "5__standard": 9.0,
+    "5__tight": 13.0
+  },
+  "setup_hours": {
+    "_description": "Estimated setup hours by complexity tier.",
+    "1": 0.5,
+    "2": 1.0,
+    "3": 1.5,
+    "4": 2.5,
+    "5": 4.0
+  },
+  "machine_type_by_complexity": {
+    "_description": "Default machine type assumed by complexity tier.",
+    "1": "3_axis_mill",
+    "2": "3_axis_mill",
+    "3": "4_axis_mill",
+    "4": "5_axis_mill",
+    "5": "5_axis_mill"
+  },
+  "overhead_rates": {
+    "_description": "Overhead rate applied to direct cost (material + machining + setup + outside processes). By region.",
+    "US": 0.35,
+    "EU": 0.38,
+    "Asia": 0.22
+  },
+  "margin_rates": {
+    "_description": "Supplier margin applied to total cost (direct + overhead). Low/mid/high by region.",
+    "US": {
+      "low": 0.08,
+      "mid": 0.14,
+      "high": 0.22
+    },
+    "EU": {
+      "low": 0.08,
+      "mid": 0.14,
+      "high": 0.22
+    },
+    "Asia": {
+      "low": 0.1,
+      "mid": 0.18,
+      "high": 0.28
+    }
+  },
+  "scrap_factors": {
+    "_description": "Scrap rate applied to direct cost. Low/mid/high.",
+    "low": 0.01,
+    "mid": 0.03,
+    "high": 0.07
+  },
+  "outside_process_costs": {
+    "_description": "Per-piece cost for outside processes. Low/mid/high. All values in USD.",
+    "heat_treat": {
+      "low": 35,
+      "mid": 55,
+      "high": 90
+    },
+    "anodize": {
+      "low": 15,
+      "mid": 25,
+      "high": 45
+    },
+    "hard_anodize": {
+      "low": 25,
+      "mid": 45,
+      "high": 75
+    },
+    "chromate": {
+      "low": 10,
+      "mid": 18,
+      "high": 30
+    },
+    "nickel_plate": {
+      "low": 30,
+      "mid": 50,
+      "high": 80
+    },
+    "passivation": {
+      "low": 12,
+      "mid": 20,
+      "high": 35
+    },
+    "shot_peen": {
+      "low": 20,
+      "mid": 35,
+      "high": 55
+    },
+    "inspection_cmm": {
+      "low": 40,
+      "mid": 65,
+      "high": 100
+    },
+    "paint": {
+      "low": 15,
+      "mid": 28,
+      "high": 50
+    }
+  },
+  "price_band_ranges": {
+    "_description": "Range multipliers applied to individual cost components to derive low and high band estimates.",
+    "material_price": {
+      "low": "price_low_per_lb",
+      "high": "price_high_per_lb"
+    },
+    "machine_rate": {
+      "low": "rate_low_per_hr",
+      "high": "rate_high_per_hr"
+    },
+    "scrap_factor": {
+      "low": "low",
+      "high": "high"
+    },
+    "margin_rate": {
+      "low": "low",
+      "high": "high"
+    }
+  },
+  "minimum_unit_price_floor": {
+    "_description": "Sanity check floor by complexity tier. Low band cannot go below these values.",
+    "1": 25,
+    "2": 75,
+    "3": 200,
+    "4": 600,
+    "5": 1500
+  },
+  "confidence_thresholds": {
+    "demerit_weights": {
+      "unverified_machining_override": 1,
+      "unverified_setup_override": 1,
+      "outside_processes_gt_3": 1,
+      "high_volatility_material": 1,
+      "complexity_tier_5": 1
+    },
+    "demerit_medium_max": 2
+  },
+  "high_volatility_materials": [
+    "Ti-6Al-4V",
+    "Inconel-718"
+  ]
+}

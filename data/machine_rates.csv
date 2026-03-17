@@ -1,0 +1,16 @@
+region,machine_type,rate_low_per_hr,rate_mid_per_hr,rate_high_per_hr,notes
+US,3_axis_mill,85,110,140,Standard CNC milling
+US,4_axis_mill,100,130,165,4-axis indexing
+US,5_axis_mill,120,155,195,Full 5-axis simultaneous
+US,turning,75,95,120,CNC lathe/turning center
+US,mill_turn,110,140,175,Combined mill-turn
+EU,3_axis_mill,90,118,150,Euro rates slightly above US
+EU,4_axis_mill,105,138,175,
+EU,5_axis_mill,128,165,208,
+EU,turning,80,102,128,
+EU,mill_turn,118,150,188,
+Asia,3_axis_mill,35,50,70,Significant range by country/tier
+Asia,4_axis_mill,45,62,85,
+Asia,5_axis_mill,58,80,108,
+Asia,turning,30,44,62,
+Asia,mill_turn,48,68,92,
