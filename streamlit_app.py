@@ -335,7 +335,7 @@ if run_btn:
             program=program or None,
             notes=notes or None,
             geometry=geo_inputs,
-            btf_override=btf_value,
+
         )
 
         with st.spinner("Computing estimate…"):
