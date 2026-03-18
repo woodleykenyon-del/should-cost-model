@@ -49,6 +49,7 @@ HARD RULES — you must follow these exactly:
 - Do not state a single target price. Discuss the range.
 - Do not speculate about supplier margins beyond what is stated.
 - Write in plain, professional language. No jargon. No bullet points. Three paragraphs maximum.
+- Do not use markdown formatting of any kind. No backticks, no bold, no code spans. Write dollar amounts as plain text like $522.55.
 - Do not mention that you are an AI or that this was generated automatically.
 
 COMPUTED RESULTS (do not modify):
@@ -92,21 +93,27 @@ def _call_claude(prompt: str) -> str | None:
         return None
 
     payload = {
-        "model": "claude-sonnet-4-6",
+        "model": "claude-sonnet-4-20250514",
         "max_tokens": 600,
         "messages": [{"role": "user", "content": prompt}],
     }
 
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=json.dumps(payload).encode(),
+        headers={
+            "Content-Type":      "application/json",
+            "x-api-key":         api_key,
+            "anthropic-version": "2023-06-01",
+        },
+        method="POST",
+    )
+
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=api_key)
-        message = client.messages.create(
-            model=payload["model"],
-            max_tokens=payload["max_tokens"],
-            messages=payload["messages"],
-        )
-        return message.content[0].text.strip()
-    except Exception:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read())
+            return data["content"][0]["text"].strip()
+    except (urllib.error.URLError, KeyError, json.JSONDecodeError):
         return None
 
 
