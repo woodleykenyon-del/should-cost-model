@@ -485,7 +485,7 @@ if st.session_state.get("run_complete") and "estimate" in st.session_state:
                         narrative = message.content[0].text.strip()
                         full_narrative = f"[AI-generated narrative — sourcing analyst summary]\n\n{narrative}"
                         est.ai_narrative = full_narrative
-                        st.markdown(full_narrative)
+                        st.write(full_narrative)
                         st.session_state["estimate"] = est
                 except Exception as e:
                     st.error(f"Narrative error: {e}")
