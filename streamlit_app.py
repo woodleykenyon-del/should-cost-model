@@ -4,15 +4,16 @@ Should-Cost Estimator — V2 UI
 Single-part estimation for machined aerospace parts.
 
 Run:
-    streamlit run app/streamlit_app.py
+    streamlit run streamlit_app.py
 
 Requires:
-    pip install streamlit openpyxl anthropic
+    pip install -r requirements.txt
 """
 
 import sys
 import os
-import io
+from html import escape
+from pathlib import Path
 import tempfile
 
 import streamlit as st
@@ -29,7 +30,7 @@ from engine.models import (
     OverrideSource, PartInputs
 )
 from engine.estimator import estimate_cost
-from engine.explain import add_narrative as generate_narrative
+from engine.explain import summarize_estimate
 from exporters.excel_export import export_to_excel
 
 # ─── PAGE CONFIG ──────────────────────────────────────────────────────────────
@@ -121,6 +122,7 @@ def _pct(part: float, total: float) -> str:
 st.markdown("#### — Sourcing Operations Suite")
 st.title("Parametric Should-Cost Estimator")
 st.caption("Defensible price estimation for machined aerospace parts  ·  Kenyon Woodley")
+st.caption("Use fictional part and program details in this public demo.")
 st.markdown('<hr class="section-rule">', unsafe_allow_html=True)
 
 
@@ -131,8 +133,8 @@ col_left, col_right = st.columns(2)
 
 with col_left:
     st.markdown("**Identification**")
-    part_id   = st.text_input("Part ID",          value="P-0001", help="Your internal part number.")
-    part_desc = st.text_input("Part Description", value="",       help="Short description — surfaces in Excel output.")
+    part_id   = st.text_input("Part ID",          value="DEMO-001", help="A fictional part identifier for the demo.")
+    part_desc = st.text_input("Part Description", value="Example machined bracket",       help="Short description — surfaces in Excel output.")
     program   = st.text_input("Program / Project", value="",      help="Optional. For tracking only.")
 
     st.markdown("**Material & Geometry**")
@@ -147,12 +149,7 @@ with col_left:
         help="Finished part weight in pounds."
     )
 
-    btf_value = st.number_input(
-        "Buy-to-Fly Ratio",
-        min_value=1.0, max_value=8.0,
-        value=2.0, step=0.1,
-        help="Buy-to-fly ratio: stock weight / finished weight. Typical range 1.3–4.5 for machined parts."
-    )
+    st.caption("Buy-to-fly ratio is estimated from the material and complexity tier.")
 
 with col_right:
     st.markdown("**Process Parameters**")
@@ -255,7 +252,7 @@ if st.session_state.get("run_complete") and "estimate" in st.session_state:
     with hero_col:
         st.markdown(f"""
         <div class="hero-card">
-          <div class="hero-label">Should-Cost Estimate — {est.part_id}</div>
+          <div class="hero-label">Should-Cost Estimate — {escape(est.part_id)}</div>
           <div class="mid-price">{_fmt(pb.mid)}</div>
           <div class="band-range">Low: {_fmt(pb.low)} &nbsp;|&nbsp; Mid: {_fmt(pb.mid)} &nbsp;|&nbsp; High: {_fmt(pb.high)}</div>
         </div>
@@ -338,51 +335,20 @@ if st.session_state.get("run_complete") and "estimate" in st.session_state:
 
     st.markdown('<hr class="section-rule">', unsafe_allow_html=True)
 
-    # ── SECTION 4: AI NARRATIVE ───────────────────────────────────────────────
-    with st.expander("AI Sourcing Narrative (optional — calls Claude API)"):
-        st.caption(
-            "Generates a plain-language sourcing summary from the computed estimate. "
-            "AI reads output figures only — it does not modify any cost numbers. "
-            "Scoring is fully deterministic."
-        )
-        if st.button("Generate Narrative"):
-            with st.spinner("Generating narrative (~2–3s)…"):
-                try:
-                    import os, anthropic
-                    api_key = os.environ.get("ANTHROPIC_API_KEY")
-                    if not api_key:
-                        st.error("ANTHROPIC_API_KEY not found in environment.")
-                    else:
-                        client = anthropic.Anthropic(api_key=api_key)
-                        from engine.explain import _build_prompt
-                        prompt = _build_prompt(est)
-                        message = client.messages.create(
-                            model="claude-sonnet-4-6",
-                            max_tokens=600,
-                            messages=[{"role": "user", "content": prompt}],
-                        )
-                        narrative = message.content[0].text.strip()
-                        full_narrative = f"[AI-generated narrative — sourcing analyst summary]\n\n{narrative}"
-                        est.ai_narrative = full_narrative
-                        st.write(full_narrative.replace("**", ""))
-                        st.session_state["estimate"] = est
-                except Exception as e:
-                    st.error(f"Narrative error: {e}")
+    with st.expander("Sourcing summary", expanded=True):
+        summary = summarize_estimate(est)
+        st.markdown(summary.replace("$", r"\$"))
 
     # ── EXPORT BUTTON ─────────────────────────────────────────────────────────
     st.markdown('<hr class="section-rule">', unsafe_allow_html=True)
 
     try:
-        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
-            export_path = tmp.name
+        with tempfile.TemporaryDirectory() as temp_dir:
+            export_path = Path(temp_dir) / "should_cost.xlsx"
+            export_to_excel(est, st.session_state.get("inputs_raw", {}), export_path)
+            excel_bytes = export_path.read_bytes()
 
-        export_to_excel(st.session_state["estimate"], st.session_state.get("inputs_raw", {}), export_path)
-
-        with open(export_path, "rb") as f:
-            excel_bytes = f.read()
-        os.unlink(export_path)
-
-        fname = f"{st.session_state['estimate'].part_id}_should_cost.xlsx"
+        fname = f"{est.part_id}_should_cost.xlsx"
         st.download_button(
             label="Download Should-Cost Report (.xlsx)",
             data=excel_bytes,

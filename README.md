@@ -8,13 +8,13 @@ Defensible price estimation for machined aerospace parts. Part of a five-tool so
 
 ## What it does
 
-Given material, part weight, complexity tier, tolerance tier, volume, and region — the engine produces a three-scenario price band (Low / Mid / High) with sensitivity analysis, confidence scoring, and an optional AI-generated sourcing narrative.
+Given material, part weight, complexity tier, tolerance tier, volume, and region — the engine produces a three-scenario price band (Low / Mid / High) with sensitivity analysis, confidence scoring, and a sourcing summary derived from the computed results.
 
-V2 adds optional STEP file geometry ingestion (local only): upload a STEP file and the engine derives finished weight and a suggested buy-to-fly ratio from the actual part geometry.
+The web demo uses manual weight entry and a table-driven buy-to-fly ratio. The repository also includes a local STEP geometry parser.
 
 ## Live demo
 
-[Launch on Streamlit Cloud →](https://your-app.streamlit.app)
+[Launch on Streamlit Cloud →](https://kenyon-should-cost.streamlit.app/)
 
 ---
 
@@ -41,7 +41,7 @@ should-cost-model/
 │   ├── models.py             # Input/output dataclasses + enums
 │   ├── estimator.py          # Deterministic cost engine
 │   ├── assumptions.py        # Data loaders (CSV + JSON)
-│   └── explain.py            # AI narrative layer (Claude API)
+│   └── explain.py            # Deterministic sourcing summary
 ├── geometry/
 │   └── step_reader.py        # STEP parser + BTF derivation (cadquery)
 ├── exporters/
@@ -52,18 +52,11 @@ should-cost-model/
     └── machine_rates.csv
 ```
 
-## AI narrative
+## Sourcing summary
 
-The AI narrative feature requires an `ANTHROPIC_API_KEY` environment variable. On Streamlit Cloud, add it under **App settings → Secrets**:
-
-```toml
-ANTHROPIC_API_KEY = "your-key-here"
-```
-
-If the key is absent, the narrative section is hidden. All cost numbers are deterministic and unaffected.
+The Streamlit results and the Notes sheet in the export use the same explanation of the price band, sensitivity, and input confidence. The summary runs locally with the estimator and needs no API key.
 
 ## Notes
 
 - Python is the source of truth. Excel export is read-only.
-- STEP upload requires cadquery, which is not available on Streamlit Cloud. The app falls back to manual input automatically.
-- All cost numbers are deterministic. The AI layer generates explanation text only — it never produces or modifies cost figures.
+- Use fictional part and program details in the public demo.

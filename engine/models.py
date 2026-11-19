@@ -223,7 +223,6 @@ class AssumptionsUsed:
 class CostEstimate:
     """
     Full output of estimate_cost(). Single source of truth.
-    ai_narrative is populated by explain.py only — never by the engine.
     """
     part_id:            str
     part_description:   str
@@ -238,5 +237,4 @@ class CostEstimate:
     confidence:         ConfidenceLevel
     confidence_notes:   list
     notes:              Optional[str] = None
-    ai_narrative:       Optional[str] = None
     geometry:           Optional["GeometryInputs"] = None

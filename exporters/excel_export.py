@@ -13,6 +13,7 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
+from engine.explain import summarize_estimate
 from engine.models import CostEstimate
 from engine.assumptions import get_full_assumptions
 
@@ -310,25 +311,17 @@ def _build_notes_tab(ws, estimate: CostEstimate):
     ws.sheet_view.showGridLines = False
 
     r = 1
-    ws.cell(row=r, column=1, value="NOTES & NARRATIVE").font = Font(
+    ws.cell(row=r, column=1, value="SOURCING SUMMARY & NOTES").font = Font(
         name="Calibri", bold=True, size=13, color=INK)
     r += 2
 
-    if estimate.ai_narrative:
-        _write_section_label(ws, r, "AI-GENERATED SOURCING NARRATIVE")
-        r += 1
-        ws.cell(row=r, column=1,
-                value="Scoring is fully deterministic. AI rewrites computed drivers into plain language only.").font = _body_font(color="888888")
-        r += 1
-        narrative_cell = ws.cell(row=r, column=1, value=estimate.ai_narrative.replace("**", "").replace("`", "$"))
-        narrative_cell.font = _body_font()
-        narrative_cell.alignment = Alignment(wrap_text=True, vertical="top")
-        ws.row_dimensions[r].height = 120
-        r += 2
-    else:
-        ws.cell(row=r, column=1,
-                value="No AI narrative generated. Set ANTHROPIC_API_KEY to enable.").font = _body_font(color="888888")
-        r += 2
+    _write_section_label(ws, r, "SOURCING SUMMARY")
+    r += 1
+    summary_cell = ws.cell(row=r, column=1, value=summarize_estimate(estimate))
+    summary_cell.font = _body_font()
+    summary_cell.alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[r].height = 150
+    r += 2
 
     _write_section_label(ws, r, "ANALYST NOTES")
     r += 1
@@ -365,7 +358,7 @@ def export_to_excel(
     Export a CostEstimate to a 5-tab Excel workbook.
 
     Args:
-        estimate:    CostEstimate from estimator.py (optionally with ai_narrative from explain.py)
+        estimate:    CostEstimate from estimator.py
         inputs_raw:  Raw dict of PartInputs fields for the Inputs tab
         output_path: Destination path. Defaults to ./{part_id}_should_cost.xlsx
 
