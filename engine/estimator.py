@@ -271,8 +271,7 @@ def _run_sensitivity(
 def estimate_cost(inputs: PartInputs) -> CostEstimate:
     """
     Produce a full should-cost estimate for the given part inputs.
-    Returns a CostEstimate object. ai_narrative field is None until
-    explain.py is called separately.
+    Returns the computed CostEstimate.
     """
 
     # --- Load assumptions ---
@@ -408,4 +407,5 @@ def estimate_cost(inputs: PartInputs) -> CostEstimate:
         assumptions_used=assumptions_used,
         confidence=confidence,
         confidence_notes=confidence_notes,
+        notes=inputs.notes,
     )
